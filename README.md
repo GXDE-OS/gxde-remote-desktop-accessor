@@ -1,7 +1,7 @@
 # 简易远程桌面连接工具 1.0
 ## 背景
 
-> [@神末shenmo](/user/279750)在https://bbs.deepin.org/post/228885中发了一些在UOS上才有的应用，然后我发现远程协助这个应用应该只能连接其他Linux电脑（没实验过，不太清楚），Windows（rdp协议）是连接不了的，而商店里的 Remmina 虽然功能强大，但并非是中文版的，于是我制作了这个程序
+> [@神末shenmo](https://bbs.deepin.org/user/279750)在https://bbs.deepin.org/post/228885 中发了一些在UOS上才有的应用，然后我发现远程协助这个应用应该只能连接其他Linux电脑（没实验过，不太清楚），Windows（rdp协议）是连接不了的，而商店里的 Remmina 虽然功能强大，但并非是中文版的，于是我制作了这个程序
 > ![](https://storage.deepin.org/thread/202112071502382593_%E5%9B%BE%E7%89%87.png)
 
 ## 介绍
