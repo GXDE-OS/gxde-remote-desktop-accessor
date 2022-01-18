@@ -1,5 +1,5 @@
 Package: spark-simple-remote-desktop-accessor
-Version: 1.0beta1
+Version: 1.0
 Architecture: amd64
 Maintainer: gfdgd xi<3025613752@qq.com>
 Depends: libdtkcore5, libdtkwidget5, libdtkgui5, rdesktop

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     a.loadTranslator(); //加载翻译
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationName("gfdgd xi"); //设置组织名称
-    a.setApplicationVersion(DApplication::buildVersion("1.0beta1"));//设置程序版本
+    a.setApplicationVersion(DApplication::buildVersion("1.0"));//设置程序版本
     a.setProductIcon(QIcon::fromTheme("/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg"));  //设置程序Logo
     a.setProductName("远程桌面连接器"); //设置项目名称
     a.setApplicationDescription("一个简单的远程桌面连接器（基于rdesktop）");//设置程序介绍
