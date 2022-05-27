@@ -26,6 +26,7 @@
 #include <DGroupBox>
 #include <DTextBrowser>
 #include <fstream>
+#include <QProcess>
 #define MAXPATH 1000
 
 MainWindow::MainWindow(DMainWindow *parent)
@@ -256,8 +257,12 @@ MainWindow::MainWindow(DMainWindow *parent)
         strcat(allHelp, "\n");
         strcat(allHelp, things);
     }
-    help->setText(allHelp);
+    //help->setText(allHelp);
     std::clog << "Read from file: " << allHelp;
+    QProcess rdesktopHelp;
+    rdesktopHelp.start("rdesktop");
+    rdesktopHelp.waitForFinished();
+    help->setText(rdesktopHelp.readAllStandardError());
     help->show();
     highSettingLayout->addWidget(help);
 
@@ -338,74 +343,89 @@ void MainWindow::ConnectIp(){
         DMessageBox::information(w, tr("提示"), tr("没有输入IP地址，无法继续"));
         return;
     }
-    QByteArray ip = MainWindow::ip->text().toLatin1();
+    QStringList option;
+    QString App;
+    //QByteArray ip = MainWindow::ip->text().toLatin1();
     char command[500] = "";
     if (moreSetting->isChecked()){
         switch (MainWindow::rdesktopVersion->checkedId()) {
             case 0:
-                strcat(command, "rdesktop ");
+                //strcat(command, "rdesktop ");
+                App = "rdesktop";
             break;
         case 1:
 
             //strcat(command, programPath);
-            strcat(command, "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop ");
+            //strcat(command, "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop ");
+            App = "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop";
             break;
         }
-
-        strcat(command, ip.data());
+        option << MainWindow::ip->text();
+        //strcat(command, ip.data());
     std::cout<<MainWindow::showScreen->checkedId();
     switch (MainWindow::showScreen->checkedId()){
     case 0:
-        strcat(command, " -f");
+        //strcat(command, " -f");
+        option << "-f";
         break;
     case 1:
-        strcat(command, " -g '");
-        QByteArray screenWidth = MainWindow::sizeScreenWidth->text().toLatin1();
-        QByteArray screenHeight = MainWindow::sizeScreenHeight->text().toLatin1();
-        strcat(command, screenWidth.data());
-        strcat(command, "x");
-        strcat(command, screenHeight.data());
-        strcat(command, "'");
+        option << "-g" << MainWindow::sizeScreenWidth->text() + "x" + MainWindow::sizeScreenHeight->text();
+        //strcat(command, " -g '");
+        //QByteArray screenWidth = MainWindow::sizeScreenWidth->text().toLatin1();
+        //QByteArray screenHeight = MainWindow::sizeScreenHeight->text().toLatin1();
+        //strcat(command, screenWidth.data());
+        //strcat(command, "x");
+        //strcat(command, screenHeight.data());
+        //strcat(command, "'");
         break;
     }
     QByteArray title = MainWindow::showTitle->text().toLatin1();
     QByteArray users = MainWindow::user->text().toLatin1();
     QByteArray passwords = MainWindow::password->text().toLatin1();
-    strcat(command, " -T '");
-    strcat(command, title.data());
-    strcat(command, "'");
+    //strcat(command, " -T '");
+    option << "-T" << MainWindow::showTitle->text();
+    //strcat(command, title.data());
+    //strcat(command, "'");
     if(MainWindow::user->text() != ""){
-    strcat(command, " -u '");
-    strcat(command, users);
-    strcat(command, "'");
+        option << "-u" << MainWindow::user->text();
+    //strcat(command, " -u '");
+    //strcat(command, users);
+    //strcat(command, "'");
     }
     if(MainWindow::password->text()!=""){
-    strcat(command, " -p '");
-    strcat(command, passwords);
-    strcat(command, "'");
+        option << "-p" << MainWindow::password->text();
+    //strcat(command, " -p '");
+    //strcat(command, passwords);
+    //strcat(command, "'");
     }
-    strcat(command, " -a ");
-    char colorNUmber[5];
-    sprintf(colorNUmber, "%d", MainWindow::color->value() * 8 + 8);
-    strcat(command, colorNUmber);
+    //strcat(command, " -a ");
+    option << "-a" << QString("%1").arg(MainWindow::color->value() * 8 + 8);
+    //char colorNUmber[5];
+    //sprintf(colorNUmber, "%d", MainWindow::color->value() * 8 + 8);
+    //strcat(command, colorNUmber);
     switch (MainWindow::rdpVersion->checkedId()) {
         case 0:
-            strcat(command, " -4 ");
+            //strcat(command, " -4 ");
+            option << "-4";
             break;
         case 1:
             strcat(command, " -5 ");
+            option << "-5";
             break;
     }
-    strcat(command, " ");
-    QByteArray commands = MainWindow::command->text().toLatin1();
-    strcat(command, commands.data());
+    //strcat(command, " ");
+    //QByteArray commands = MainWindow::command->text().toLatin1();
+    //strcat(command, commands.data());
+    option << MainWindow::command->text();
     }
     else {
-        strcat(command, "rdesktop ");
+        /*strcat(command, "rdesktop ");
         strcat(command, ip.data());
         strcat(command, " -T '");
         strcat(command, ip.data());
-        strcat(command, "' ");
+        strcat(command, "' ");*/
+        App = "rdesktop";
+        option << MainWindow::ip->text() << "-T" << MainWindow::ip->text();
     }
     w->setEnabled(false);
     strcat(command, " 2> /tmp/rdesktop.txt");
@@ -415,7 +435,7 @@ void MainWindow::ConnectIp(){
         std::cout<<command<<std::endl;
         std::cout<<"rdesktop 运行返回值："<<returnValue<<std::endl;
         w->setEnabled(true);
-        std::ifstream file;
+        /*std::ifstream file;
         file.open("/tmp/rdesktop.txt");
         char allHelp[5000];
         char things[300];
@@ -424,11 +444,15 @@ void MainWindow::ConnectIp(){
         {
             strcat(allHelp, things);
             strcat(allHelp, "\n");
-        }
-        DMessageBox::information(this, tr("提示"), tr(allHelp));
-        std::clog << "Read from file: " << allHelp;
-
-
+        }*/
+        //DMessageBox::information(this, tr("提示"), tr(allHelp));
+        //std::clog << "Read from file: " << allHelp;
+        QProcess *process = new QProcess();
+        //connect(process, SIGNAL(started()), SLOT(started()));
+        process->setProgram("bash");
+        qDebug() << option;
+        process->startDetached(App, option);
+        //process->setArguments(list);
 }
 MainWindow::~MainWindow()
 {
