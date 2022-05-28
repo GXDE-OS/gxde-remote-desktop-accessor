@@ -40,12 +40,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     moveToCenter(this); //把窗口移动到屏幕中间
     w->setWindowTitle(tr("远程桌面连接器"));
     this->setWindowFlags(windowFlags() &~ Qt::WindowMaximizeButtonHint);
-    //w->setWindowFlags(w->windowFlags() &~Qt::WindowMaximizeButtonHint);
     MainWindow::resize(500, 100); //改变窗口大小应当改变MainWindow的大小
-
-    /*DLabel *ipTips = new DLabel("IP地址：");
-    ipTips->setParent(w);
-    ipTips->show();*/
 
     ip = new DLineEdit;
     ip->setParent(w);
@@ -60,15 +55,10 @@ MainWindow::MainWindow(DMainWindow *parent)
     connect(connectButton, &DPushButton::clicked, this, &MainWindow::ConnectIp);
     connectButton->show();
 
-    /*DLabel *userName = new DLabel("用户名：本地登录用户名");
-    userName->setParent(w);
-    userName->show();*/
-
     moreSetting = new DCheckBox("更多选项");
     moreSetting->setParent(w);
     moreSetting->setCheckable(true);
     moreSetting->show();
-    //moreSetting->adjustSize();
     connect(moreSetting, &DCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
 
     QHBoxLayout *moreSettingLayout = new QHBoxLayout;
@@ -98,7 +88,6 @@ MainWindow::MainWindow(DMainWindow *parent)
     DRadioButton *fullScreen = new DRadioButton("全屏访问");
     fullScreen->show();
     fullScreen->setParent(showTab);
-    //QVBoxLayout *sizeScreenLayout = new QVBoxLayout();
     DRadioButton *sizeScreen = new DRadioButton("指定分辨率访问");
     sizeScreen->setChecked(true);
     sizeScreen->setParent(showTab);
@@ -166,8 +155,6 @@ MainWindow::MainWindow(DMainWindow *parent)
     showTabLayout->addWidget(showTitleTips, 2, 0);
     showTabLayout->addWidget(showTitle, 2, 1, 1, 3);
     showTabLayout->addWidget(colorTips, 3, 0);
-    //showTabLayout->addWidget(color, 3, 1, 1, 2);
-    //showTabLayout->addWidget(colorShow, 3, 3);
     showTabLayout->addLayout(colorLayout, 3, 1, 1, 3);
     showTab->setLayout(showTabLayout);
 
@@ -177,10 +164,10 @@ MainWindow::MainWindow(DMainWindow *parent)
     userPasswordLayout->addWidget(new DLabel(tr("密码：")), 1, 0);
     userPasswordLayout->addWidget(password, 1, 1);
     userPasswordTab->setLayout(userPasswordLayout);
-    //QHBoxLayout
     QVBoxLayout *connectLayout = new QVBoxLayout();
     QVBoxLayout *rdpVersionLayout = new QVBoxLayout();
     QVBoxLayout *rdesktopVersionLayout = new QVBoxLayout();
+    QVBoxLayout *rdesktopConnectLayout = new QVBoxLayout();
 
     DWidget *connectTab = new DWidget();
     connectTab->setParent(moreSettingFrame);
@@ -237,6 +224,28 @@ MainWindow::MainWindow(DMainWindow *parent)
     rdesktopVersionLayout->addWidget(systemRdesktop);
     rdesktopVersionLayout->addWidget(rdesktop190);
 
+    DGroupBox *rdesktopConnect = new DGroupBox();
+    rdesktopConnect->setParent(connectTab);
+    rdesktopConnect->show();
+    rdesktopConnect->setTitle("连接选项");
+    rdesktopConnect->setLayout(rdesktopConnectLayout);
+    connectLayout->addWidget(rdesktopConnect);
+
+    paste = new DCheckBox();
+    paste->setParent(rdesktopConnect);
+    paste->setText("剪切板共享");
+    paste->setChecked(true);
+    paste->show();
+
+    remoteSound = new DCheckBox();
+    remoteSound->setParent(rdesktopConnect);
+    remoteSound->setText("播放远程连接声音");
+    remoteSound->setChecked(true);
+    remoteSound->show();
+
+    rdesktopConnectLayout->addWidget(paste);
+    rdesktopConnectLayout->addWidget(remoteSound);
+
     DWidget *highSetting = new DWidget();
     highSetting->setParent(moreSettingFrame);
     highSetting->show();
@@ -247,18 +256,6 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     DTextBrowser *help = new DTextBrowser();
     help->setParent(highSetting);
-    std::ifstream file;
-    file.open("/home/gfdgd_xi/temp.txt");
-    char allHelp[10000];
-    char things[100];
-    //file>>things;
-    while (file.getline(things, 100))
-    {
-        strcat(allHelp, "\n");
-        strcat(allHelp, things);
-    }
-    //help->setText(allHelp);
-    std::clog << "Read from file: " << allHelp;
     QProcess rdesktopHelp;
     rdesktopHelp.start("rdesktop");
     rdesktopHelp.waitForFinished();
@@ -290,9 +287,6 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     AllWidget->addLayout(firstLineWidget);
     AllWidget->setStretchFactor(firstLineWidget, 1);
-    //AllWidget->addWidget(new DLabel("用户名：本地登录用户名"));
-    //AllWidget->setStretchFactor(new DLabel("用户名：本地登录用户名"), 1);
-    //AllWidget->addWidget(fullScreen);
     AllWidget->addWidget(moreSetting);
     AllWidget->setStretchFactor(moreSetting, 1);
     AllWidget->addWidget(moreSettingFrame);
@@ -330,129 +324,66 @@ void MainWindow::ShowMoreSetting(){
     }
     moreSettingFrame->setEnabled(false);
 }
-char * MainWindow::ReadFile(char *path){
-    std::ifstream file;
-    file.open(path);
-    char things[100];
-    file >> things;
-    return things;
-}
-
 void MainWindow::ConnectIp(){
     if(MainWindow::ip->text() == ""){
         DMessageBox::information(w, tr("提示"), tr("没有输入IP地址，无法继续"));
         return;
     }
     QStringList option;
-    QString App;
-    //QByteArray ip = MainWindow::ip->text().toLatin1();
-    char command[500] = "";
+    QString App = "padsp";
     if (moreSetting->isChecked()){
         switch (MainWindow::rdesktopVersion->checkedId()) {
             case 0:
-                //strcat(command, "rdesktop ");
-                App = "rdesktop";
-            break;
-        case 1:
-
-            //strcat(command, programPath);
-            //strcat(command, "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop ");
-            App = "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop";
-            break;
+                option << "rdesktop";
+                break;
+            case 1:
+                option << "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop";
+                break;
         }
         option << MainWindow::ip->text();
-        //strcat(command, ip.data());
-    std::cout<<MainWindow::showScreen->checkedId();
-    switch (MainWindow::showScreen->checkedId()){
-    case 0:
-        //strcat(command, " -f");
-        option << "-f";
-        break;
-    case 1:
-        option << "-g" << MainWindow::sizeScreenWidth->text() + "x" + MainWindow::sizeScreenHeight->text();
-        //strcat(command, " -g '");
-        //QByteArray screenWidth = MainWindow::sizeScreenWidth->text().toLatin1();
-        //QByteArray screenHeight = MainWindow::sizeScreenHeight->text().toLatin1();
-        //strcat(command, screenWidth.data());
-        //strcat(command, "x");
-        //strcat(command, screenHeight.data());
-        //strcat(command, "'");
-        break;
-    }
-    QByteArray title = MainWindow::showTitle->text().toLatin1();
-    QByteArray users = MainWindow::user->text().toLatin1();
-    QByteArray passwords = MainWindow::password->text().toLatin1();
-    //strcat(command, " -T '");
-    option << "-T" << MainWindow::showTitle->text();
-    //strcat(command, title.data());
-    //strcat(command, "'");
-    if(MainWindow::user->text() != ""){
-        option << "-u" << MainWindow::user->text();
-    //strcat(command, " -u '");
-    //strcat(command, users);
-    //strcat(command, "'");
-    }
-    if(MainWindow::password->text()!=""){
-        option << "-p" << MainWindow::password->text();
-    //strcat(command, " -p '");
-    //strcat(command, passwords);
-    //strcat(command, "'");
-    }
-    //strcat(command, " -a ");
-    option << "-a" << QString("%1").arg(MainWindow::color->value() * 8 + 8);
-    //char colorNUmber[5];
-    //sprintf(colorNUmber, "%d", MainWindow::color->value() * 8 + 8);
-    //strcat(command, colorNUmber);
-    switch (MainWindow::rdpVersion->checkedId()) {
-        case 0:
-            //strcat(command, " -4 ");
-            option << "-4";
-            break;
-        case 1:
-            strcat(command, " -5 ");
-            option << "-5";
-            break;
-    }
-    //strcat(command, " ");
-    //QByteArray commands = MainWindow::command->text().toLatin1();
-    //strcat(command, commands.data());
-    option << MainWindow::command->text();
+        switch (MainWindow::showScreen->checkedId()){
+            case 0:
+                option << "-f";
+                break;
+            case 1:
+                option << "-g" << MainWindow::sizeScreenWidth->text() + "x" + MainWindow::sizeScreenHeight->text();
+                break;
+        }
+        if(MainWindow::user->text() != ""){
+            option << "-u" << MainWindow::user->text();
+        }
+        if(MainWindow::password->text()!=""){
+            option << "-T" << MainWindow::showTitle->text() << "-p" << MainWindow::password->text();
+        }
+        option << "-a" << QString("%1").arg(MainWindow::color->value() * 8 + 8);
+        switch (MainWindow::rdpVersion->checkedId()) {
+            case 0:
+                option << "-4";
+                break;
+            case 1:
+                option << "-5";
+                break;
+        }
+        if(MainWindow::paste->isChecked()){
+            option << "-r" << "clipboard:PRIMARYCLIPBOARD";
+        }
+        if(MainWindow::remoteSound->isChecked()){
+            option << "-r" << "sound:local";
+        }
+        if(MainWindow::command->text() != ""){
+            option << MainWindow::command->text().split(" ");
+        }
     }
     else {
-        /*strcat(command, "rdesktop ");
-        strcat(command, ip.data());
-        strcat(command, " -T '");
-        strcat(command, ip.data());
-        strcat(command, "' ");*/
-        App = "rdesktop";
-        option << MainWindow::ip->text() << "-T" << MainWindow::ip->text();
+        option << "rdesktop" << MainWindow::ip->text() << "-T" << MainWindow::ip->text() << "-r" << "clipboard:PRIMARYCLIPBOARD" << "-r" << "sound:local";
     }
-    w->setEnabled(false);
-    strcat(command, " 2> /tmp/rdesktop.txt");
-    //char aaa[500] = "/home/gfdgd_xi/Documents/git/build-DtkDemo-unknown-Debug/rdesktop 120.25.153.145 -g '800x600' -T '' -a 32 -5   2> /tmp/rdesktop.txt";
-       int returnValue = std::system(command);
-    //int returnValue = std::system("/home/gfdgd_xi/Documents/git/build-DtkDemo-unknown-Debug/rdesktop 120.25.153.145 -g '800x600' -T '' -a 32 -5   2> /tmp/rdesktop.txt");
-        std::cout<<command<<std::endl;
-        std::cout<<"rdesktop 运行返回值："<<returnValue<<std::endl;
-        w->setEnabled(true);
-        /*std::ifstream file;
-        file.open("/tmp/rdesktop.txt");
-        char allHelp[5000];
-        char things[300];
-        //file>>things;
-        while (file.getline(things, 300))
-        {
-            strcat(allHelp, things);
-            strcat(allHelp, "\n");
-        }*/
-        //DMessageBox::information(this, tr("提示"), tr(allHelp));
-        //std::clog << "Read from file: " << allHelp;
-        QProcess *process = new QProcess();
-        //connect(process, SIGNAL(started()), SLOT(started()));
-        process->setProgram("bash");
-        qDebug() << option;
-        process->startDetached(App, option);
-        //process->setArguments(list);
+    w->setEnabled(false);   
+    QProcess *process = new QProcess();
+    process->start(App, option);
+    process->write("yes");
+    process->waitForFinished();
+    process->close();
+    w->setEnabled(true);
 }
 MainWindow::~MainWindow()
 {

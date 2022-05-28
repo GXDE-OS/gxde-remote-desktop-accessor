@@ -33,6 +33,9 @@ private:
     QButtonGroup *showScreen = new QButtonGroup(this);
     QButtonGroup *rdpVersion = new QButtonGroup(this);
     QButtonGroup *rdesktopVersion = new QButtonGroup(this);
+    //QButtonGroup *rdpConnect = new QButtonGroup(this);
+    DCheckBox *paste = new DCheckBox();
+    DCheckBox *remoteSound = new DCheckBox();
     DCheckBox *moreSetting = new DCheckBox;
     DFrame *moreSettingFrame = new DFrame;
     DLineEdit *sizeScreenWidth = new DLineEdit();
