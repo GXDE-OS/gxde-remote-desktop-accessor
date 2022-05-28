@@ -10,14 +10,22 @@
 在我测试中，我发现系统默认版本的 `rdesktop（1.8.6）` 是无法连接 `Windows XP`（不知道是不是个例），而编译的 `rdesktop 1.9.0` 是没有问题的，所以我也把编译好的应用放进 `deb` 包并支持选择版本
   
 ### 截图
-![截图录屏_simple-remote-desktop-accessor_20220528211936.png](https://storage.deepin.org/thread/202205282130114462_截图录屏_simple-remote-desktop-accessor_20220528211936.png)
-![深度截图_选择区域_20220528210628.png](https://storage.deepin.org/thread/202205282130109227_深度截图_选择区域_20220528210628.png)
-![深度截图_选择区域_20220528210552.png](https://storage.deepin.org/thread/202205282130108296_深度截图_选择区域_20220528210552.png)
-![截图_simple-remote-desktop-accessor_20220528212950.png](https://storage.deepin.org/thread/202205282130264494_截图_simple-remote-desktop-accessor_20220528212950.png)
-![截图_选择区域_20220528212932.png](https://storage.deepin.org/thread/202205282130265167_截图_选择区域_20220528212932.png)
+![截图录屏_simple-remote-desktop-accessor_20220529072709.png](https://storage.deepin.org/thread/202205290736044793_截图录屏_simple-remote-desktop-accessor_20220529072709.png)
+![深度截图_选择区域_20220529071844.png](https://storage.deepin.org/thread/202205290736041866_深度截图_选择区域_20220529071844.png)
+![深度截图_选择区域_20220529071602.png](https://storage.deepin.org/thread/202205290736049721_深度截图_选择区域_20220529071602.png)
+![截图_选择区域_20220529073314.png](https://storage.deepin.org/thread/202205290736264141_截图_选择区域_20220529073314.png)
+![截图_simple-remote-desktop-accessor_20220529073040.png](https://storage.deepin.org/thread/202205290736263677_截图_simple-remote-desktop-accessor_20220529073040.png)
 
 ## 更新内容
-### 1.2.0
+### 1.2.0-1（2022年05月29日）
+※1、优化了在 Ubuntu 下界面的显示，不会显示双标题栏  
+※2、补充了缺失依赖  
+![截图录屏_simple-remote-desktop-accessor_20220529072709.png](https://storage.deepin.org/thread/202205290736044793_截图录屏_simple-remote-desktop-accessor_20220529072709.png)
+![深度截图_选择区域_20220529071844.png](https://storage.deepin.org/thread/202205290736041866_深度截图_选择区域_20220529071844.png)
+![深度截图_选择区域_20220529071602.png](https://storage.deepin.org/thread/202205290736049721_深度截图_选择区域_20220529071602.png)
+![截图_选择区域_20220529073314.png](https://storage.deepin.org/thread/202205290736264141_截图_选择区域_20220529073314.png)
+![截图_simple-remote-desktop-accessor_20220529073040.png](https://storage.deepin.org/thread/202205290736263677_截图_simple-remote-desktop-accessor_20220529073040.png)
+### 1.2.0（2022年05月28日）
 ※1、添加了剪切板共享、目录共享、远程计算机声音播放的功能  
 ※2、把使用 `std::system()` 运行命令修改为用`QProcess`运行命令以及获取返回值和输出内容  
 ※3、修复了在 UOS/Ubuntu 下运行因为编译的 Qt 版本过高而无法运行的问题  

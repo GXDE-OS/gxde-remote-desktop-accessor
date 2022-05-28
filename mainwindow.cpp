@@ -325,6 +325,7 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     //让程序适配浅色模式和深色模式 Adapt the program to light and dark model
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
+
 }
 void MainWindow::ShowScreenEnabled(){
     MainWindow::sizeScreenWidth->setEnabled(MainWindow::showScreen->checkedId());

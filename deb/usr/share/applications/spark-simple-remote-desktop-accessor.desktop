@@ -2,7 +2,7 @@
 Categories=System
 Exec=simple-remote-desktop-accessor
 Icon=/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg
-Name=简易远程桌面连接工具
+Name=rdp 远程桌面连接工具
 StartupNotify=true
 Terminal=false
 Type=Application
