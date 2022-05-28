@@ -85,7 +85,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     password->show();
 
     showScreen = new QButtonGroup();
-    DRadioButton *fullScreen = new DRadioButton("全屏访问");
+    DRadioButton *fullScreen = new DRadioButton("全屏访问（按Ctrl+Alt+Enter退出全屏）");
     fullScreen->show();
     fullScreen->setParent(showTab);
     DRadioButton *sizeScreen = new DRadioButton("指定分辨率访问");
@@ -147,7 +147,7 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     QGridLayout *showTabLayout = new QGridLayout;
     showTabLayout->setParent(showTab);
-    showTabLayout->addWidget(fullScreen, 0, 0);
+    showTabLayout->addWidget(fullScreen, 0, 0, 1, 4);
     showTabLayout->addWidget(sizeScreen, 1, 0);
     showTabLayout->addWidget(sizeScreenWidth, 1, 1);
     showTabLayout->addWidget(cheng, 1, 2);
@@ -209,12 +209,12 @@ MainWindow::MainWindow(DMainWindow *parent)
     DRadioButton *systemRdesktop = new DRadioButton();
     systemRdesktop->setParent(rdesktopVersionBox);
     systemRdesktop->setText("设置为系统版本的rdesktop（可能会不支持连接Windows XP）");
+    systemRdesktop->setChecked(true);
     systemRdesktop->show();
 
     DRadioButton *rdesktop190 = new DRadioButton();
     rdesktop190->setParent(rdesktopVersionBox);
     rdesktop190->setText("设置为rdesktop 1.9.0（测试支持连接Windows XP）");
-    rdesktop190->setChecked(true);
     rdesktop190->show();
 
     rdesktopVersion = new QButtonGroup();
@@ -243,8 +243,21 @@ MainWindow::MainWindow(DMainWindow *parent)
     remoteSound->setChecked(true);
     remoteSound->show();
 
+    shareRootFile = new DCheckBox();
+    shareRootFile->setParent(rdesktopConnect);
+    shareRootFile->setText("共享系统根目录");
+    shareRootFile->show();
+
+    shareHomeFile = new DCheckBox();
+    shareHomeFile->setParent(rdesktopConnect);
+    shareHomeFile->setText("共享用户目录");
+    shareHomeFile->setChecked(true);
+    shareHomeFile->show();
+
     rdesktopConnectLayout->addWidget(paste);
     rdesktopConnectLayout->addWidget(remoteSound);
+    rdesktopConnectLayout->addWidget(shareRootFile);
+    rdesktopConnectLayout->addWidget(shareHomeFile);
 
     DWidget *highSetting = new DWidget();
     highSetting->setParent(moreSettingFrame);
@@ -340,7 +353,7 @@ void MainWindow::ConnectIp(){
                 option << "/opt/durapps/spark-simple-remote-desktop-accessor/rdesktop";
                 break;
         }
-        option << MainWindow::ip->text();
+        option << MainWindow::ip->text() << "-T" << MainWindow::showTitle->text() << "-a" << QString("%1").arg(MainWindow::color->value() * 8 + 8);
         switch (MainWindow::showScreen->checkedId()){
             case 0:
                 option << "-f";
@@ -353,9 +366,8 @@ void MainWindow::ConnectIp(){
             option << "-u" << MainWindow::user->text();
         }
         if(MainWindow::password->text()!=""){
-            option << "-T" << MainWindow::showTitle->text() << "-p" << MainWindow::password->text();
+            option << "-p" << MainWindow::password->text();
         }
-        option << "-a" << QString("%1").arg(MainWindow::color->value() * 8 + 8);
         switch (MainWindow::rdpVersion->checkedId()) {
             case 0:
                 option << "-4";
@@ -370,19 +382,30 @@ void MainWindow::ConnectIp(){
         if(MainWindow::remoteSound->isChecked()){
             option << "-r" << "sound:local";
         }
+        if(MainWindow::shareRootFile->isChecked()){
+            option << "-r" << "disk:ROOT=/";
+        }
+        if(MainWindow::shareHomeFile->isChecked()){
+            option  << "-r" << "disk:HOME=" + QDir::homePath();
+        }
         if(MainWindow::command->text() != ""){
             option << MainWindow::command->text().split(" ");
         }
     }
     else {
-        option << "rdesktop" << MainWindow::ip->text() << "-T" << MainWindow::ip->text() << "-r" << "clipboard:PRIMARYCLIPBOARD" << "-r" << "sound:local";
+        option << "rdesktop" << MainWindow::ip->text() << "-T" << MainWindow::ip->text() << "-r" << "clipboard:PRIMARYCLIPBOARD" << "-r" << "sound:local" << "-r" << "disk:HOME=" + QDir::homePath();
     }
     w->setEnabled(false);   
     QProcess *process = new QProcess();
     process->start(App, option);
-    process->write("yes");
+    process->write("yes\n");
+    process->waitForStarted();
     process->waitForFinished();
-    process->close();
+    //process->close();
+    if(process->exitCode() != 0 && process->exitCode() != 62){
+        DMessageBox::critical(this, "错误", "程序返回值：" + QString("%1").arg(process->exitCode()) + "\n具体错误：\n" + process->readAllStandardError());
+        qDebug() << QString::fromLocal8Bit(process->readAllStandardError());
+    }
     w->setEnabled(true);
 }
 MainWindow::~MainWindow()

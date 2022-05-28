@@ -12,7 +12,13 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication a(argc, argv);
+    QVector<char*> fakeArgs(argc + 2);
+    fakeArgs[0] = argv[0];
+    fakeArgs[1] = "-platformtheme";
+    fakeArgs[2] = "deepin";
+    for(int i = 1; i < argc; i++) fakeArgs[i + 2] = argv[i];
+    int fakeArgc = argc + 2; // 为啥DApplication的argc要用引用啊？
+        DApplication a(fakeArgc, fakeArgs.data());
 
     a.loadTranslator(); //加载翻译
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -22,7 +28,6 @@ int main(int argc, char *argv[])
     a.setProductName("远程桌面连接器"); //设置项目名称
     a.setApplicationDescription("一个简单的远程桌面连接器（基于rdesktop）");//设置程序介绍
     a.setApplicationName("远程桌面连接器"); //只有在这儿修改窗口标题才有效
-
 
     MainWindow w;
     w.show();

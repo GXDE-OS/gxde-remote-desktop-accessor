@@ -36,6 +36,8 @@ private:
     //QButtonGroup *rdpConnect = new QButtonGroup(this);
     DCheckBox *paste = new DCheckBox();
     DCheckBox *remoteSound = new DCheckBox();
+    DCheckBox *shareRootFile = new DCheckBox();
+    DCheckBox *shareHomeFile = new DCheckBox();
     DCheckBox *moreSetting = new DCheckBox;
     DFrame *moreSettingFrame = new DFrame;
     DLineEdit *sizeScreenWidth = new DLineEdit();
