@@ -27,11 +27,81 @@
 #include <DTextBrowser>
 #include <fstream>
 #include <QProcess>
+#include <DAbstractDialog>
+#include <QLoggingCategory>
+// 文件读取需要库
+#include <QFile>
+// 读取 JSON 需要库
+#include <QJsonParseError>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+
+
 #define MAXPATH 1000
+
+/*
+ * 打开配置文件
+*/
+void MainWindow::OpenFile(){
+    QString file = DFileDialog::getOpenFileName(this, "浏览", "~", "JSON配置文件(*.json);;所有文件(*.*)");
+    QMessageBox::information(this, "", file);
+    // 读取 JSON 文件
+    QFile jsonFile(file);
+    jsonFile.open(QIODevice::ReadOnly);
+    QByteArray array = jsonFile.readAll();
+    qDebug() << array;
+    QJsonDocument setting = QJsonDocument::fromJson(array);
+    QJsonObject obj = setting.object();
+    ip->setText(obj.value("ip").toString());
+    moreSetting->setChecked(obj.value("moreSetting").toBool());
+    user->setText(obj.value("user").toString());
+    password->setText(obj.value("password").toString());
+    //showScreen
+    sizeScreenWidth->setText(obj.value("sizeScreenWidth").toString());
+    sizeScreenHeight->setText(obj.value("sizeScreenHeight").toString());
+    showTitle->setText(obj.value("showTitle").toString());
+    color->setValue(obj.value("color").toInt());
+    rdpVersion->setId(rdpVersion->buttons()[obj.value("rdpVersion").toInt()], -1);
+    rdesktopVersion->setId(rdesktopVersion->buttons()[obj.value("rdpVersion").toInt()], -1);
+    //rdesktopConnect->setId(rdesktopConnect->buttons()[obj.value("rdpVersion").toInt()], -1);
+    paste->setChecked(obj.value("paste").toBool());
+    remoteSound->setChecked(obj.value("remoteSound").toBool());
+    shareRootFile->setChecked(obj.value("shareRootFile").toBool());
+    shareHomeFile->setChecked(obj.value("shareHomeFile").toBool());
+    command->setText(obj.value("command").toString());
+}
+void MainWindow::SaveFile(){
+    QString file = DFileDialog::getSaveFileName(this, "浏览", "~", "JSON配置文件(*.json);;所有文件(*.*)");
+    QJsonObject json;
+    json.insert("ip", ip->text());
+    json.insert("moreSetting", moreSetting->isChecked());
+    json.insert("user", user->text());
+    json.insert("password", password->text());
+    json.insert("sizeScreenWidth", sizeScreenWidth->text());
+    json.insert("sizeScreenHeight", sizeScreenHeight->text());
+    json.insert("showTitle", showTitle->text());
+    json.insert("color", color->value());
+    json.insert("rdpVersion", rdpVersion->checkedId());
+    json.insert("rdesktopVersion", rdesktopVersion->checkedId());
+    json.insert("paste", paste->isChecked());
+    json.insert("remoteSound", remoteSound->isChecked());
+    json.insert("shareRootFile", shareRootFile->isChecked());
+    json.insert("shareHomeFile", shareHomeFile->isChecked());
+    json.insert("command", command->text());
+    QJsonDocument jsonDocument;
+    jsonDocument.setObject(json);
+    QFile jsonFile(file);
+    jsonFile.open(QIODevice::ReadWrite);
+    jsonFile.write(jsonDocument.toJson());
+    jsonFile.close();
+}
 
 MainWindow::MainWindow(DMainWindow *parent)
     : DMainWindow(parent)
 {
+    // 允许 qDebug() 输出
+    QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
     // 获取程序目录
     getcwd(programPath, 100);
     std::clog << "Path: " << programPath << std::endl;
@@ -309,16 +379,30 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     //在标题栏上添加一个菜单/菜单项 Add a menu/menu item to the title bar
     QMenu *menu=new QMenu;
+    QAction *openFile = new QAction("打开配置文件");
+    connect(openFile, &QAction::triggered, this, &MainWindow::OpenFile);
+    menu->addAction(openFile);
+
+    QAction *saveFile = new QAction("保存配置文件");
+    connect(saveFile, &QAction::triggered, this, &MainWindow::SaveFile);
+    menu->addAction(saveFile);
+
+    menu->addSeparator();
+
     QAction *giteeAction=new QAction("Gitee 网站");
     menu->addAction(giteeAction);
-    titlebar()->setMenu(menu);
     connect(giteeAction, &QAction::triggered, this, [&](){std::system("xdg-open https://gitee.com/gfdgd-xi/simple-remote-desktop-accessor");});
 
 
     QAction *githubAction=new QAction("Github 网站");
     menu->addAction(githubAction);
-    titlebar()->setMenu(menu);
     connect(githubAction, &QAction::triggered, this, [&](){std::system("xdg-open https://github.com/gfdgd-xi/simple-remote-desktop-accessor");});
+
+    QAction *gitlinkAction = new QAction("Gitlink 网站");
+    menu->addAction(gitlinkAction);
+    connect(gitlinkAction, &QAction::triggered, this, [&](){std::system("");});
+
+    titlebar()->setMenu(menu);
 
     //设置标题栏上的图标 Set the icon on the title bar
     titlebar()->setIcon(QIcon::fromTheme("/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg"));
@@ -327,6 +411,8 @@ MainWindow::MainWindow(DMainWindow *parent)
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
 
 }
+
+
 void MainWindow::ShowScreenEnabled(){
     MainWindow::sizeScreenWidth->setEnabled(MainWindow::showScreen->checkedId());
     MainWindow::sizeScreenHeight->setEnabled(MainWindow::showScreen->checkedId());
@@ -396,7 +482,7 @@ void MainWindow::ConnectIp(){
     else {
         option << "rdesktop" << MainWindow::ip->text() << "-T" << MainWindow::ip->text() << "-r" << "clipboard:PRIMARYCLIPBOARD" << "-r" << "sound:local" << "-r" << "disk:HOME=" + QDir::homePath();
     }
-    w->setEnabled(false);   
+    w->setEnabled(false);
     QProcess *process = new QProcess();
     process->start(App, option);
     process->write("yes\n");
