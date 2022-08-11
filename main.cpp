@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.loadTranslator(); //加载翻译
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    a.setOrganizationName("gfdgd xi"); //设置组织名称
-    a.setApplicationVersion(DApplication::buildVersion("1.2.0-1"));//设置程序版本
+    a.setOrganizationName("gfdgd xi、为什么您不喜欢熊出没和阿布呢"); //设置组织名称
+    a.setApplicationVersion(DApplication::buildVersion("1.2.1"));//设置程序版本
     a.setProductIcon(QIcon::fromTheme("/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg"));  //设置程序Logo
     a.setProductName("远程桌面连接器"); //设置项目名称
     a.setApplicationDescription("一个 rdp 远程桌面连接器（基于rdesktop）");//设置程序介绍

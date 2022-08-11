@@ -25,6 +25,18 @@ class MainWindow : public DMainWindow
 public:
     MainWindow(DMainWindow *parent = nullptr);
     ~MainWindow();
+    void setTheme(DGuiApplicationHelper::ColorType);
+    void ConnectIp();
+    void ShowMoreSetting();
+    void ShowScreenEnabled();
+    char * ReadFile(char path[]);
+    void OpenFile();
+    void SaveFile();
+    void OpenProgramWithTerminal(QStringList argv);
+    void InstallXrdp();
+    void WriteXrdpUserXfce4();
+    void WriteXrdpUserDde();
+
 private:
     QHBoxLayout *moreSettingLayout = new QHBoxLayout;
     QVBoxLayout *AllWidget = new QVBoxLayout;
@@ -49,13 +61,6 @@ private:
     DSlider *color = new DSlider();
     DLabel *colorShow = new DLabel();
     QWidget *w=new QWidget; //w是窗口的用户区，应当是所有窗口中控件的父（不包含标题栏及其上边的控件） W is the user area of the window and should be the parent of all controls in the window (excluding the title bar and controls above it)
-    void setTheme(DGuiApplicationHelper::ColorType);
-    void ConnectIp();
-    void ShowMoreSetting();
-    void ShowScreenEnabled();
-    char * ReadFile(char path[]);
-    void OpenFile();
-    void SaveFile();
     char programPath[100];
 };
 
