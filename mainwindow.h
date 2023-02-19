@@ -26,6 +26,8 @@ public:
     MainWindow(DMainWindow *parent = nullptr);
     ~MainWindow();
 private:
+    QString GetRunCommand(QString command);
+    QString RunDTKCommand(QString command);
     QHBoxLayout *moreSettingLayout = new QHBoxLayout;
     QVBoxLayout *AllWidget = new QVBoxLayout;
     DPushButton *install = new DPushButton;

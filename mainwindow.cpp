@@ -214,8 +214,11 @@ MainWindow::MainWindow(DMainWindow *parent)
 
     DRadioButton *rdesktop190 = new DRadioButton();
     rdesktop190->setParent(rdesktopVersionBox);
-    rdesktop190->setText("设置为rdesktop 1.9.0（测试支持连接Windows XP）");
+    rdesktop190->setText("设置为rdesktop 1.9.0（测试支持连接Windows XP，只支持 amd64）");
+    rdesktop190->setEnabled(GetRunCommand("arch").replace(" ", "").replace("\n", "") == QString("x86_64"));
+    //GetRunCommand("arch");
     rdesktop190->show();
+
 
     rdesktopVersion = new QButtonGroup();
     rdesktopVersion->addButton(systemRdesktop, 0);
@@ -326,7 +329,36 @@ MainWindow::MainWindow(DMainWindow *parent)
     //让程序适配浅色模式和深色模式 Adapt the program to light and dark model
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
 
+    // 判断是否为 !amd64 + !rdesktop
+    if(GetRunCommand("arch").replace(" ", "").replace("\n", "") != QString("x86_64") && system("which rdesktop")){
+        if(QMessageBox::question(w, "提示", "您似乎还没用安装 rdesktop，是否安装？") == QMessageBox::Yes){
+            RunDTKCommand("deepin-terminal -C \"pkexec apt install rdesktop\" ");
+        }
+    }
+
 }
+QString MainWindow::GetRunCommand(QString command){
+    QProcess process;
+    process.start(command);
+    process.waitForStarted();
+    process.waitForFinished();
+    QString re = process.readAllStandardOutput();
+    process.close();
+    return re;
+}
+
+// 运行 DTK应用（以修复在 Ubuntu 下运行 DTK 应用时 UI 显示问题）
+QString MainWindow::RunDTKCommand(QString command){
+    QProcess process;
+    process.setEnvironment({{"XDG_CURRENT_DESKTOP", "Deepin"}});
+    process.start(command + " -platformtheme deepin");
+    process.waitForStarted();
+    process.waitForFinished();
+    QString re = process.readAllStandardOutput();
+    process.close();
+    return re;
+}
+
 void MainWindow::ShowScreenEnabled(){
     MainWindow::sizeScreenWidth->setEnabled(MainWindow::showScreen->checkedId());
     MainWindow::sizeScreenHeight->setEnabled(MainWindow::showScreen->checkedId());
@@ -346,6 +378,7 @@ void MainWindow::ConnectIp(){
     QStringList option;
     QString App = "padsp";
     if (moreSetting->isChecked()){
+        // 高级选项
         switch (MainWindow::rdesktopVersion->checkedId()) {
             case 0:
                 option << "rdesktop";
@@ -394,6 +427,7 @@ void MainWindow::ConnectIp(){
         }
     }
     else {
+        // 默认模式
         option << "rdesktop" << MainWindow::ip->text() << "-T" << MainWindow::ip->text() << "-r" << "clipboard:PRIMARYCLIPBOARD" << "-r" << "sound:local" << "-r" << "disk:HOME=" + QDir::homePath();
     }
     w->setEnabled(false);   
