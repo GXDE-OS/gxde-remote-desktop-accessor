@@ -36,7 +36,7 @@ VERSION = 1.0
 BINDIR  = $$PREFIX/bin
 target.path = $$BINDIR
 
-icon.files = icon.svg
+icon.files = simple-remote-desktop-accessor.svg
 icon.path = /usr/share/icons/hicolor/512x512/apps/
 
 desktop.files = spark-simple-remote-desktop-accessor.desktop
@@ -47,7 +47,6 @@ INSTALLS += target icon desktop
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
 
 
 FORMS +=
