@@ -36,8 +36,8 @@ VERSION = 1.0
 BINDIR  = $$PREFIX/bin
 target.path = $$BINDIR
 
-icon.files = simple-remote-desktop-accessor.svg
-icon.path = /usr/share/icons/hicolor/512x512/apps/
+icon.files = icon.svg
+icon.path = /opt/durapps/spark-simple-remote-desktop-accessor/
 
 desktop.files = spark-simple-remote-desktop-accessor.desktop
 desktop.path = /usr/share/applications/
