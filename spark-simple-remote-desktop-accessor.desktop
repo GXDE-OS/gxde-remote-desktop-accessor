@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System
-Exec=simple-remote-desktop-accessor
-Icon=/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg
+Exec=/opt/apps/spark-simple-remote-desktop-accessor/files/bin/simple-remote-desktop-accessor
+Icon=/opt/apps/spark-simple-remote-desktop-accessor/entries/icons/hicolor/scalable/spark-simple-remote-desktop-accessor.svg
 Name=rdp 远程桌面连接工具
 StartupNotify=true
 Terminal=false
