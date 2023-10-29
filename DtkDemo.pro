@@ -33,20 +33,20 @@ HEADERS += \
     mainwindow.h
 
 VERSION = 1.0
-BINDIR  = $$PREFIX/bin
+BINDIR  = /opt/apps/spark-simple-remote-desktop-accessor/files/bin
 target.path = $$BINDIR
 
-icon.files = icon.svg
-icon.path = /opt/durapps/spark-simple-remote-desktop-accessor/
+icon.files = spark-simple-remote-desktop-accessor.svg
+icon.path = /opt/apps/spark-simple-remote-desktop-accessor/entries/icons/hicolor/scalable
 
 desktop.files = spark-simple-remote-desktop-accessor.desktop
-desktop.path = /usr/share/applications/
+desktop.path = /opt/apps/spark-simple-remote-desktop-accessor/entries/applications/
 
 INSTALLS += target icon desktop
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+#qnx: target.path = /tmp/$${TARGET}/bin
+#else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 FORMS +=
