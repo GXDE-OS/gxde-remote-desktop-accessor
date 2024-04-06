@@ -1,8 +1,8 @@
-Maintainer: gfdgd xi<3025613752@qq.com>, 为什么您不喜欢熊出没和阿布呢
+Maintainer: gfdgd xi<3025613752@qq.com>
 Description: 一个基于 dtk 制作的一个简易远程桌面连接软件
 Architecture: @@arch@@
 Version: @@version@@
 Priority: optional
 Package: spark-simple-remote-desktop-accessor
-Depends: libdtkcore5, libdtkwidget5, libdtkgui5, rdesktop, curl, libhogweed4, libnettle6
+Depends: libdtkcore5, libdtkwidget5, libdtkgui5, rdesktop, curl, libhogweed4, libnettle6, tigervnc-viewer
 Section: utils

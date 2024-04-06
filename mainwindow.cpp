@@ -27,6 +27,8 @@
 #include <DTextBrowser>
 #include <fstream>
 #include <QProcess>
+#include <QTcpSocket>
+
 #define MAXPATH 1000
 
 MainWindow::MainWindow(DMainWindow *parent)
@@ -373,6 +375,51 @@ void MainWindow::ShowMoreSetting(){
 void MainWindow::ConnectIp(){
     if(MainWindow::ip->text() == ""){
         DMessageBox::information(w, tr("提示"), tr("没有输入IP地址，无法继续"));
+        return;
+    }
+    QString ip = MainWindow::ip->text();
+    int port = 0;
+    bool isVNC = false;
+    bool isRDP = false;
+    // 自动检测是否为 VNC
+    QTcpSocket socket;
+    socket.connectToHost(
+                ip,
+                0);
+    if(ip.contains(":")) {
+        // 含有端口
+        int index = ip.indexOf(":");
+        port = ip.mid(index + 1).toInt();
+        ip = ip.mid(0, index);
+        // 如果端口号过小，则为 VNC
+        if(port < 30) {
+            isVNC = true;
+        }
+        // 如果端口号在 5900 <= port <= 5930 附近则为 VNC
+        if(port >= 5900 && port <= 5930) {
+            isVNC = true;
+        }
+        // 如果端口为 3389,则为 rdp
+        if(port == 3389) {
+            isRDP = true;
+        }
+    }
+    /*if(!(isVNC + isRDP)) {
+        // 判断是否为 rdp
+        QTcpSocket socket;
+        if(!port) {
+            socket.connectToHost(ip, 3389);
+            if(socket.waitForConnected()) {
+                qDebug() << "Error";
+            }
+            qDebug() << socket.errorString();
+        }
+    }*/
+    if(isVNC) {
+        QProcess process;
+        process.start("xtigervncviewer", QStringList() << ip);
+        process.waitForStarted();
+        process.waitForFinished();
         return;
     }
     QStringList option;
