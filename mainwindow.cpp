@@ -57,19 +57,29 @@ MainWindow::MainWindow(DMainWindow *parent)
     connect(connectButton, &DPushButton::clicked, this, &MainWindow::ConnectIp);
     connectButton->show();
 
-    moreSetting = new DCheckBox("更多选项");
+    moreSetting = new DCheckBox(tr("更多选项"));
     moreSetting->setParent(w);
     moreSetting->setCheckable(true);
     moreSetting->show();
     connect(moreSetting, &DCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
 
-    QHBoxLayout *moreSettingLayout = new QHBoxLayout;
+    QVBoxLayout *moreSettingLayout = new QVBoxLayout;
     moreSettingLayout->setParent(moreSettingFrame);
 
     moreSettingFrame = new DFrame;
     moreSettingFrame->setParent(w);
     moreSettingFrame->setEnabled(false);
     moreSettingFrame->setLayout(moreSettingLayout);
+
+    QHBoxLayout *connectChooserLayout = new QHBoxLayout();
+    connectChooser = new DComboBox();
+    connectChooser->addItems(QStringList() << "RDP" << "VNC");
+    connect(connectChooser, &DComboBox::currentTextChanged, this, [this](){
+        moreSettingTab->setDisabled(connectChooser->currentIndex());
+    });
+    connectChooserLayout->addWidget(new DLabel(tr("远程协议：")));
+    connectChooserLayout->addWidget(connectChooser);
+    moreSettingLayout->addLayout(connectChooserLayout);
 
     DWidget *showTab = new DWidget;
     showTab->setParent(moreSettingFrame);
@@ -287,7 +297,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     command->show();
     highSettingLayout->addWidget(command);
 
-    DTabWidget *moreSettingTab = new DTabWidget;
+    moreSettingTab = new DTabWidget;
     moreSettingTab->setParent(moreSettingFrame);
     moreSettingTab->addTab(showTab, tr("显示"));
     moreSettingTab->addTab(userPasswordTab, tr("用户"));
@@ -381,12 +391,11 @@ void MainWindow::ConnectIp(){
     int port = 0;
     bool isVNC = false;
     bool isRDP = false;
-    // 自动检测是否为 VNC
-    QTcpSocket socket;
-    socket.connectToHost(
-                ip,
-                0);
-    if(ip.contains(":")) {
+    // 如果有用户选择了高级模式 + VNC 协议，则无需分析
+    if(moreSetting->isChecked() && connectChooser->currentIndex()) {
+        isVNC = true;
+    }
+    else if(ip.contains(":")) {
         // 含有端口
         int index = ip.indexOf(":");
         port = ip.mid(index + 1).toInt();
@@ -417,7 +426,7 @@ void MainWindow::ConnectIp(){
     }*/
     if(isVNC) {
         QProcess process;
-        process.start("xtigervncviewer", QStringList() << ip);
+        process.start("gvncviewer", QStringList() << ip);
         process.waitForStarted();
         process.waitForFinished();
         return;

@@ -4,5 +4,5 @@ Architecture: @@arch@@
 Version: @@version@@
 Priority: optional
 Package: spark-simple-remote-desktop-accessor
-Depends: libdtkcore5, libdtkwidget5, libdtkgui5, rdesktop, curl, libhogweed4, libnettle6, tigervnc-viewer
+Depends: libdtkcore5, libdtkwidget5, libdtkgui5, rdesktop, curl, libhogweed4, libnettle6, gvncviewer
 Section: utils

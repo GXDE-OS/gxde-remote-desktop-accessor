@@ -15,6 +15,7 @@
 #include <DPasswordEdit>
 #include <DSlider>
 #include <unistd.h>
+#include <DComboBox>
 
 DWIDGET_USE_NAMESPACE
 
@@ -50,7 +51,10 @@ private:
     DPasswordEdit *password = new DPasswordEdit();
     DSlider *color = new DSlider();
     DLabel *colorShow = new DLabel();
+    DComboBox *connectChooser = new DComboBox();
+    DTabWidget *moreSettingTab;
     QWidget *w=new QWidget; //w是窗口的用户区，应当是所有窗口中控件的父（不包含标题栏及其上边的控件） W is the user area of the window and should be the parent of all controls in the window (excluding the title bar and controls above it)
+
     void setTheme(DGuiApplicationHelper::ColorType);
     void ConnectIp();
     void ShowMoreSetting();
