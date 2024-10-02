@@ -15,16 +15,16 @@
 #include <DFileDialog>
 #include <iostream>
 #include <QByteArray>
-#include <DCheckBox>
-#include <DMessageBox>
-#include <DFrame>
-#include <DTabWidget>
-#include <DRadioButton>
+#include <QCheckBox>
+#include <QMessageBox>
+#include <QFrame>
+#include <QTabWidget>
+#include <QRadioButton>
 #include <QButtonGroup>
 #include <QGridLayout>
 #include <QSlider>
-#include <DGroupBox>
-#include <DTextBrowser>
+#include <QGroupBox>
+#include <QTextBrowser>
 #include <fstream>
 #include <QProcess>
 #include <QTcpSocket>
@@ -57,34 +57,34 @@ MainWindow::MainWindow(DMainWindow *parent)
     connect(connectButton, &DPushButton::clicked, this, &MainWindow::ConnectIp);
     connectButton->show();
 
-    moreSetting = new DCheckBox(tr("更多选项"));
+    moreSetting = new QCheckBox(tr("更多选项"));
     moreSetting->setParent(w);
     moreSetting->setCheckable(true);
     moreSetting->show();
-    connect(moreSetting, &DCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
+    connect(moreSetting, &QCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
 
     QVBoxLayout *moreSettingLayout = new QVBoxLayout;
     moreSettingLayout->setParent(moreSettingFrame);
 
-    moreSettingFrame = new DFrame;
+    moreSettingFrame = new QFrame;
     moreSettingFrame->setParent(w);
     moreSettingFrame->setEnabled(false);
     moreSettingFrame->setLayout(moreSettingLayout);
 
     QHBoxLayout *connectChooserLayout = new QHBoxLayout();
-    connectChooser = new DComboBox();
+    connectChooser = new QComboBox();
     connectChooser->addItems(QStringList() << "RDP" << "VNC");
-    connect(connectChooser, &DComboBox::currentTextChanged, this, [this](){
+    connect(connectChooser, &QComboBox::currentTextChanged, this, [this](){
         moreSettingTab->setDisabled(connectChooser->currentIndex());
     });
     connectChooserLayout->addWidget(new DLabel(tr("远程协议：")));
     connectChooserLayout->addWidget(connectChooser);
     moreSettingLayout->addLayout(connectChooserLayout);
 
-    DWidget *showTab = new DWidget;
+    QWidget *showTab = new QWidget;
     showTab->setParent(moreSettingFrame);
     showTab->show();
-    DWidget *userPasswordTab = new DWidget();
+    QWidget *userPasswordTab = new QWidget();
     userPasswordTab->setParent(moreSettingFrame);
     userPasswordTab->show();
 
@@ -97,19 +97,19 @@ MainWindow::MainWindow(DMainWindow *parent)
     password->show();
 
     showScreen = new QButtonGroup();
-    DRadioButton *fullScreen = new DRadioButton("全屏访问（按Ctrl+Alt+Enter退出全屏）");
+    QRadioButton *fullScreen = new QRadioButton("全屏访问（按Ctrl+Alt+Enter退出全屏）");
     fullScreen->show();
     fullScreen->setParent(showTab);
-    DRadioButton *sizeScreen = new DRadioButton("指定分辨率访问");
+    QRadioButton *sizeScreen = new QRadioButton("指定分辨率访问");
     sizeScreen->setChecked(true);
     sizeScreen->setParent(showTab);
     sizeScreen->show();
 
     showScreen->addButton(fullScreen, 0);
     showScreen->addButton(sizeScreen, 1);
-    connect(moreSetting, &DCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
-    connect(fullScreen, &DRadioButton::clicked, this, &MainWindow::ShowScreenEnabled);
-    connect(sizeScreen, &DRadioButton::clicked, this, &MainWindow::ShowScreenEnabled);
+    connect(moreSetting, &QCheckBox::stateChanged, this, &MainWindow::ShowMoreSetting);
+    connect(fullScreen, &QRadioButton::clicked, this, &MainWindow::ShowScreenEnabled);
+    connect(sizeScreen, &QRadioButton::clicked, this, &MainWindow::ShowScreenEnabled);
 
 
     sizeScreenWidth = new DLineEdit();
@@ -181,24 +181,24 @@ MainWindow::MainWindow(DMainWindow *parent)
     QVBoxLayout *rdesktopVersionLayout = new QVBoxLayout();
     QVBoxLayout *rdesktopConnectLayout = new QVBoxLayout();
 
-    DWidget *connectTab = new DWidget();
+    QWidget *connectTab = new QWidget();
     connectTab->setParent(moreSettingFrame);
     connectTab->setLayout(connectLayout);
     connectTab->show();
 
-    DGroupBox *rdpVersionBox = new DGroupBox();
+    QGroupBox *rdpVersionBox = new QGroupBox();
     rdpVersionBox->setParent(connectTab);
     rdpVersionBox->show();
     rdpVersionBox->setTitle("rdp 版本");
     rdpVersionBox->setLayout(rdpVersionLayout);
     connectLayout->addWidget(rdpVersionBox);
 
-    DRadioButton *rdp4 = new DRadioButton();
+    QRadioButton *rdp4 = new QRadioButton();
     rdp4->setParent(rdpVersionBox);
     rdp4->setText("设置为rdp4协议连接");
     rdp4->show();
 
-    DRadioButton *rdp5 = new DRadioButton();
+    QRadioButton *rdp5 = new QRadioButton();
     rdp5->setParent(rdpVersionBox);
     rdp5->setText("设置为rdp5协议连接（推荐）");
     rdp5->setChecked(true);
@@ -211,20 +211,20 @@ MainWindow::MainWindow(DMainWindow *parent)
     rdpVersionLayout->addWidget(rdp4);
     rdpVersionLayout->addWidget(rdp5);
 
-    DGroupBox *rdesktopVersionBox = new DGroupBox();
+    QGroupBox *rdesktopVersionBox = new QGroupBox();
     rdesktopVersionBox->setParent(connectTab);
     rdesktopVersionBox->show();
     rdesktopVersionBox->setTitle("rdesktop 版本");
     rdesktopVersionBox->setLayout(rdesktopVersionLayout);
     connectLayout->addWidget(rdesktopVersionBox);
 
-    DRadioButton *systemRdesktop = new DRadioButton();
+    QRadioButton *systemRdesktop = new QRadioButton();
     systemRdesktop->setParent(rdesktopVersionBox);
     systemRdesktop->setText("设置为系统版本的rdesktop（可能会不支持连接Windows XP）");
     systemRdesktop->setChecked(true);
     systemRdesktop->show();
 
-    DRadioButton *rdesktop190 = new DRadioButton();
+    QRadioButton *rdesktop190 = new QRadioButton();
     rdesktop190->setParent(rdesktopVersionBox);
     rdesktop190->setText("设置为rdesktop 1.9.0（测试支持连接Windows XP，只支持 amd64）");
     rdesktop190->setEnabled(GetRunCommand("arch").replace(" ", "").replace("\n", "") == QString("x86_64"));
@@ -239,31 +239,31 @@ MainWindow::MainWindow(DMainWindow *parent)
     rdesktopVersionLayout->addWidget(systemRdesktop);
     rdesktopVersionLayout->addWidget(rdesktop190);
 
-    DGroupBox *rdesktopConnect = new DGroupBox();
+    QGroupBox *rdesktopConnect = new QGroupBox();
     rdesktopConnect->setParent(connectTab);
     rdesktopConnect->show();
     rdesktopConnect->setTitle("连接选项");
     rdesktopConnect->setLayout(rdesktopConnectLayout);
     connectLayout->addWidget(rdesktopConnect);
 
-    paste = new DCheckBox();
+    paste = new QCheckBox();
     paste->setParent(rdesktopConnect);
     paste->setText("剪切板共享");
     paste->setChecked(true);
     paste->show();
 
-    remoteSound = new DCheckBox();
+    remoteSound = new QCheckBox();
     remoteSound->setParent(rdesktopConnect);
     remoteSound->setText("播放远程连接声音");
     remoteSound->setChecked(true);
     remoteSound->show();
 
-    shareRootFile = new DCheckBox();
+    shareRootFile = new QCheckBox();
     shareRootFile->setParent(rdesktopConnect);
     shareRootFile->setText("共享系统根目录");
     shareRootFile->show();
 
-    shareHomeFile = new DCheckBox();
+    shareHomeFile = new QCheckBox();
     shareHomeFile->setParent(rdesktopConnect);
     shareHomeFile->setText("共享用户目录");
     shareHomeFile->setChecked(true);
@@ -274,7 +274,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     rdesktopConnectLayout->addWidget(shareRootFile);
     rdesktopConnectLayout->addWidget(shareHomeFile);
 
-    DWidget *highSetting = new DWidget();
+    QWidget *highSetting = new QWidget();
     highSetting->setParent(moreSettingFrame);
     highSetting->show();
 
@@ -282,7 +282,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     highSettingLayout->setParent(highSetting);
     highSetting->setLayout(highSettingLayout);
 
-    DTextBrowser *help = new DTextBrowser();
+    QTextBrowser *help = new QTextBrowser();
     help->setParent(highSetting);
     QProcess rdesktopHelp;
     rdesktopHelp.start("rdesktop");
@@ -297,7 +297,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     command->show();
     highSettingLayout->addWidget(command);
 
-    moreSettingTab = new DTabWidget;
+    moreSettingTab = new QTabWidget;
     moreSettingTab->setParent(moreSettingFrame);
     moreSettingTab->addTab(showTab, tr("显示"));
     moreSettingTab->addTab(userPasswordTab, tr("用户"));
@@ -339,7 +339,7 @@ MainWindow::MainWindow(DMainWindow *parent)
     titlebar()->setIcon(QIcon::fromTheme("/opt/durapps/spark-simple-remote-desktop-accessor/icon.svg"));
 
     //让程序适配浅色模式和深色模式 Adapt the program to light and dark model
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
+    //connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
 
     // 判断是否为 !amd64 + !rdesktop
     if(GetRunCommand("arch").replace(" ", "").replace("\n", "") != QString("x86_64") && system("which rdesktop")){
@@ -384,7 +384,7 @@ void MainWindow::ShowMoreSetting(){
 }
 void MainWindow::ConnectIp(){
     if(MainWindow::ip->text() == ""){
-        DMessageBox::information(w, tr("提示"), tr("没有输入IP地址，无法继续"));
+        QMessageBox::information(w, tr("提示"), tr("没有输入IP地址，无法继续"));
         return;
     }
     QString ip = MainWindow::ip->text();
@@ -494,7 +494,7 @@ void MainWindow::ConnectIp(){
     process->waitForFinished();
     //process->close();
     if(process->exitCode() != 0 && process->exitCode() != 62){
-        DMessageBox::critical(this, "错误", "程序返回值：" + QString("%1").arg(process->exitCode()) + "\n具体错误：\n" + process->readAllStandardError());
+        QMessageBox::critical(this, "错误", "程序返回值：" + QString("%1").arg(process->exitCode()) + "\n具体错误：\n" + process->readAllStandardError());
         qDebug() << QString::fromLocal8Bit(process->readAllStandardError());
     }
     w->setEnabled(true);
@@ -504,7 +504,7 @@ MainWindow::~MainWindow()
     delete w;
 }
 
-void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
+/*void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
 {
     //这个函数在程序运行之初就会被调用一次，而后每次更换主题颜色时被调用。 This function is called at the beginning of the program and then every time the theme color is changed.
     if(theme==DGuiApplicationHelper::LightType){ //在这个位置设置两种不同的样式 Set two different styles at this location
@@ -514,4 +514,4 @@ void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
         //深色模式 Dark Mode
         qDebug()<<"Dark";
     }
-}
+}*/
