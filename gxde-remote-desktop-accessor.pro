@@ -4,12 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = simple-remote-desktop-accessor
+TARGET = gxde-remote-desktop-accessor
 TEMPLATE = app
+
+#include(vnc/qvncclientwidget.pri)
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -27,10 +29,12 @@ PKGCONFIG += dtkwidget
 
 SOURCES += \
         main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    qvncclientwidget.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    qvncclientwidget.h
 
 VERSION = 1.0
 BINDIR  = /opt/apps/spark-simple-remote-desktop-accessor/files/bin
